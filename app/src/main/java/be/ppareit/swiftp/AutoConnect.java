@@ -99,6 +99,22 @@ public class AutoConnect {
         }
     }
 
+    static public class StartServerOnBootupService extends IntentService {
+
+        public StartServerOnBootupService() {
+            super(StartServerOnBootupService.class.getSimpleName());
+        }
+
+        @Override
+        protected void onHandleIntent(Intent intent) {
+            if (FsService.isRunning()) {
+                return;
+            }
+            Util.sleepIgnoreInterrupt(1000);
+            sendBroadcast(new Intent(FsService.ACTION_START_FTPSERVER));
+        }
+    }
+
     static public class StopServerService extends IntentService {
 
         public StopServerService() {

@@ -18,6 +18,8 @@ import android.support.v4.provider.DocumentFile;
 import android.util.Log;
 
 
+import org.apache.commons.io.FileUtils;
+
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -200,13 +202,21 @@ public abstract class FileUtil {
     public static boolean moveFile(@NonNull final File source, @NonNull final File target, Context context) {
         // First try the normal rename.
         // First try the normal rename.
+        /*
         if (rename(source, target.getName())) {
             return true;
-        }
+        }*/
         if (target.exists()) {
             return false;
         }
 
+        try {
+            FileUtils.moveFile(source, target);
+            return true;
+        } catch (Exception e){
+            return false;
+        }
+/*
         // Try the Storage Access Framework if it is just a rename within the same parent folder.
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP
                 && source.getParent().equals(target.getParent()) && FileUtil.isOnExtSdCard(source, context)) {
@@ -218,7 +228,7 @@ public abstract class FileUtil {
                 if (DocumentsContract.renameDocument(context.getContentResolver(), document.getUri(), target.getName()) != null) {
                     return true;
                 }
-            } catch (FileNotFoundException e) {
+            } catch (Exception e) {
                 e.printStackTrace();
             }
         }
@@ -233,7 +243,7 @@ public abstract class FileUtil {
             return false;
         }
 
-        return true;
+        return true;*/
     }
 
     /**
@@ -245,9 +255,10 @@ public abstract class FileUtil {
      */
     public static boolean renameFolder(@NonNull final File source, @NonNull final File target, Context context) {
         // First try the normal rename.
+        /*
         if (rename(source, target.getName())) {
             return true;
-        }
+        }*/
         if (target.exists()) {
             return false;
         }
@@ -263,11 +274,18 @@ public abstract class FileUtil {
                 if(DocumentsContract.renameDocument(context.getContentResolver(), document.getUri(), target.getName()) != null) {
                     return true;
                 }
-            } catch (FileNotFoundException e) {
+            } catch (Exception e) {
                 e.printStackTrace();
             }
         }
+        try {
+            FileUtils.moveDirectory(source, target);
+            return true;
+        } catch (Exception e){
+            return false;
+        }
 
+        /*
         // Try the manual way, moving files individually.
         if (!mkdir(target, context)) {
             return false;
@@ -294,7 +312,7 @@ public abstract class FileUtil {
                 return false;
             }
         }
-        return true;
+        return true;*/
     }
 
     /**
